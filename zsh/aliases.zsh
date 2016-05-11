@@ -1,0 +1,7 @@
+alias ls='ls --color=auto'
+alias Y='yaourt'
+alias yaup='yaourt -Syu'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias startsshd='sudo systemctl start sshd'
