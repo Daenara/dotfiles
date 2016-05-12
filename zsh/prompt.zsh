@@ -12,7 +12,7 @@ arrow_left=$'\ue0b0' # 
 arrow_sep=$'\ue0b1'
 arrow_right=$'\ue0b2' #    
 # directory
-dir=" %~ "
+dir=" %13<..<%~%<< "
 # uhrzeit
 time="%T"
 arrow_left_temp=""
