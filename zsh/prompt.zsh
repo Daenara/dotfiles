@@ -79,8 +79,10 @@ function build_prompt_left(){
 }
 function draw_segment_right(){
     local bg=$1 fg=$2 content=$3
-    print -n "%K{$arrow_right_temp}%F{$bg}$arrow_right%f%k%K{$bg}%F{$fg}$content%f%k"    
-     arrow_right_temp=$bg
+    if [ ! -z $content ];
+        then print -n "%K{$arrow_right_temp}%F{$bg}$arrow_right%f%k%K{$bg}%F{$fg}$content%f%k"    
+        arrow_right_temp=$bg
+    fi
 }
 function build_prompt_right(){
     ssh=$(ssh)
