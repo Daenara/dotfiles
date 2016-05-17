@@ -12,7 +12,8 @@ arrow_left=$'\ue0b0' # 
 arrow_sep=$'\ue0b1'
 arrow_right=$'\ue0b2' #    
 # directory
-dir=" %13<..<%~%<< "
+# dir=" %13<..<%~%<< "
+dir=${PWD/#HOME/~}
 # uhrzeit
 time="%T"
 arrow_left_temp=""
@@ -41,19 +42,36 @@ function exit_status(){
       echo -n ""
     fi
 }
-
+function directory(){
+    dir=${PWD/#$HOME/~}
+    #dir="%~"
+    count=10
+    while [ ${#dir} -gt 10 ]
+    do
+      aktdir="%${count}~"
+      dir="..$aktdir"
+      let count=$count-1
+      if [ $count -eq 0 ]
+        then
+	  #dir="$dir"
+          break 
+      fi
+    done
+    echo -n $dir
+}
 function draw_segment_left(){
     local bg=$1 fg=$2 content=$3
     if [ ! -z $content ];
-    then print -n "%K{$bg}$arrow_left_temp%F{$fg}$content%f%k"
-    arrow_left_temp="%F{$bg}$arrow_left%f"
-fi
+      then print -n "%K{$bg}$arrow_left_temp%F{$fg}$content%f%k"
+      arrow_left_temp="%F{$bg}$arrow_left%f"
+    fi
 }
 function build_prompt_left(){
-    exit=$(exit_status)
+    exitvar=$(exit_status)
     user=$(usercolor)
     host=" $user@%m "
-    draw_segment_left 'green' '' $exit
+    dir=$(directory)
+    draw_segment_left 'green' '' $exitvar
     draw_segment_left 'yellow' 'red' $host
     draw_segment_left 'blue' 'red' $dir
     print -n $arrow_left_temp
