@@ -44,7 +44,7 @@ function exit_status(){
 }
 function get_dir(){
   local n=$1
-  dir=${PWD/#$HOME/~}
+  dir="${PWD/#$HOME/~}"
   if [ -z $n ] || [ $n = 0 ];
     then echo -n $dir
   else
@@ -69,10 +69,10 @@ function get_dir(){
       if [ $elem -eq $n ] && [ ! $finish ]; then
          newdir="..$newdir"   
       elif [ $((elem+1)) -eq $count_slash ]; then
-         count=2
+         count=1
          finish=true
       elif [ $((elem+1)) -eq $n ]; then
-         count=2
+         count=1
          newdir="../$newdir"
          finish=true
       else
