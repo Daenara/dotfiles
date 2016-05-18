@@ -13,7 +13,7 @@ arrow_sep=$'\ue0b1'
 arrow_right=$'\ue0b2' #    
 # directory
 # dir=" %13<..<%~%<< "
-dir=${PWD/#HOME/~}
+#dir=${PWD/#HOME/~}
 # uhrzeit
 time="%T"
 arrow_left_temp=""
@@ -42,14 +42,58 @@ function exit_status(){
       echo -n ""
     fi
 }
+function get_dir(){
+  local n=$1
+  dir=${PWD/#$HOME/~}
+  if [ -z $n ] || [ $n = 0 ];
+    then echo -n $dir
+  else
+    array=()
+    count_slash=$(grep -o "/" <<< "$dir" | wc -l)
+    for (( i=1; i<=$count_slash+1; i++ ))
+    do
+      array[$i]=$(cut -d/ -f$i <<< "$dir")
+    done
+    elem=0
+    newdir=""
+    finish=false
+    let count=$count_slash+1
+    while [ $n -gt $elem ] && [ $((elem+1)) -lt $count_slash ]
+    do
+      if [ ! -z $newdir ]; then
+        newdir="${array[$count]}/$newdir"
+      else
+        newdir="$array[$count]"
+      fi
+      let elem=$elem+1
+      if [ $elem -eq $n ] && [ ! $finish ]; then
+         newdir="..$newdir"   
+      elif [ $((elem+1)) -eq $count_slash ]; then
+         count=2
+         finish=true
+      elif [ $((elem+1)) -eq $n ]; then
+         count=2
+         newdir="../$newdir"
+         finish=true
+      else
+         let count=$count-1
+      fi
+    done
+    echo -n $newdir
+    #if [ $n = 1 ]; then
+    #  echo -n "../${array[count_slash+1]}"
+    #elif [ $n = 2 ]; then
+    #  echo -n "${array[2]}/../${array[count_slash+1]}"
+    #fi 
+  fi 
+}
 function directory(){
-    dir=${PWD/#$HOME/~}
+    dir=$(get_dir 0)
     #dir="%~"
     count=10
-    while [ ${#dir} -gt 10 ]
+    while [ ${#dir} -gt 30 ]
     do
-      aktdir="%${count}~"
-      dir="..$aktdir"
+      dir="$(get_dir $count)"
       let count=$count-1
       if [ $count -eq 0 ]
         then
