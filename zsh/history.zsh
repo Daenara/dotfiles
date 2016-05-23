@@ -6,7 +6,7 @@ setopt inc_append_history # Add comamnds as they are typed, don't wait until she
 
 setopt hist_expire_dups_first # when trimming history, lose oldest duplicates first
 
-setopt hist_ignore_dups # Do not write events to history that are duplicates of previous events
+setopt hist_ignore_all_dups # Do not write events to history that are duplicates of previous events
 
 setopt hist_ignore_space # remove command line from history list when first character on the line is a space
 
@@ -20,6 +20,8 @@ setopt share_history # imports new commands and appends typed commands to histor
 
 # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 HIST_STAMPS="dd.mm.yyyy" # change timestamp in history
+
+HISTFILE=$ZSH/run/history-$HOST-$UID
 
 # Bigger History
 HISTSIZE=20000

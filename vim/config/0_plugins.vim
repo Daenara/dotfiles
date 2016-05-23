@@ -4,6 +4,9 @@ call plug#begin('~/.vim/plugged')
 
 " Colorschemes for vim
 Plug 'flazz/vim-colorschemes'
+Plug 'vim-airline/vim-airline'
+Plug 'ervandew/supertab'
+Plug 'Raimondi/delimitMate'
 
 " Add plugins to &runtimepath
 call plug#end()
