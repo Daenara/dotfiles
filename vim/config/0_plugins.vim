@@ -2,11 +2,10 @@ call plug#begin('~/.vim/plugged')
 
 " Make sure you use single quotes
 
-" Colorschemes for vim
-Plug 'flazz/vim-colorschemes'
-Plug 'vim-airline/vim-airline'
-Plug 'ervandew/supertab'
-Plug 'Raimondi/delimitMate'
+Plug 'flazz/vim-colorschemes' " colorschemes for vim
+Plug 'vim-airline/vim-airline' " vim powerline-like statusbar
+Plug 'ervandew/supertab' " tabcompletion
+Plug 'Raimondi/delimitMate' " autocloses brackets
 
 " Add plugins to &runtimepath
 call plug#end()
