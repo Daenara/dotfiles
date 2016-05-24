@@ -15,28 +15,33 @@ arrow_right=$'\ue0b2' #
 fg=255
 bg=236
 # uhrzeit
-time="%T"
+time="%F{$fg}%T%f"
 arrow_left_temp=""
 arrow_right_temp=""
 function check_ssh(){
     if [ $SSH_CONNECTION ]; then
-        echo -n "SSH"
+        echo -n "%F{$fg}SSH%f"
     else
         echo ""
     fi
 }
 function usercolor(){
-    if [ "$(whoami)" = "root" ]; then
-        fontcolor="red"
+    who=$(whoami)
+    if [ "$who" = "root" ]; then
+        fontcolor="088"
+    elif [ "$who" = "daenara" ]; then
+        fontcolor="063"
+    elif [ "$who" = "seibel" ]; then
+        fontcolor="021"
     else
-        fontcolor="green"
+        fontcolor="040"
     fi
     echo -n "%F{$fontcolor}%n%f"      
 }
 
 function exit_status(){
     if [ "$?" = "1" ]; then
-        echo -n "%F{red}$cross%f"
+        echo -n "%F{001}$cross%f"
     else
         echo -n ""
     fi
@@ -44,47 +49,59 @@ function exit_status(){
 function get_dir(){
     local n=$1
     dir="${PWD/#$HOME/~}"
+    # trennzeichen zwischen ordnern
+    seperator="%F{000}/%f"
+    # string der an gekürzten stellen angezeigt wird
+    abridged="%F{$fg}..%f"
+    # anzahl von / im pfad
+    count_slash=$(grep -o "/" <<< "$dir" | wc -l)
+    array=()
+    # alle ordnernamen werden in array geschrieben
+    for (( i=1; i<=$count_slash+1; i++ ))
+    do
+        array[$i]=$(cut -d/ -f$i <<< "$dir")
+    done
+    # maximale anzahl der pfadelemente
+    max=$n
+    # true wenn der ganze pfad ausgegeben werden soll, sonst false
+    all=false
     if [ -z $n ] || [ $n = 0 ]; then
-        echo -n $dir
-    else
-        array=()
-        count_slash=$(grep -o "/" <<< "$dir" | wc -l)
-        for (( i=1; i<=$count_slash+1; i++ ))
-        do
-            array[$i]=$(cut -d/ -f$i <<< "$dir")
-        done
-        elem=0
-        newdir=""
-        finish=false
-        let count=$count_slash+1
-        while [ $n -gt $elem ] && [ $((elem+1)) -lt $count_slash ]
-        do
-            if [ ! -z $newdir ]; then
-                newdir="${array[$count]}/$newdir"
-            else
-                newdir="$array[$count]"
-            fi
-            let elem=$elem+1
-            if [ $elem -eq $n ] && [ ! $finish ]; then
-                newdir="..$newdir"   
-            elif [ $((elem+1)) -eq $count_slash ]; then
-                count=1
-                finish=true
-            elif [ $((elem+1)) -eq $n ]; then
-                count=1
-                newdir="../$newdir"
-                finish=true
-            else
-                let count=$count-1
-            fi
-        done
-        echo -n $newdir
+        let max=$count_slash+1
+        all=true
     fi
+    elem=0
+    newdir=""
+    # das aktuelle element im array ist das letzte
+    let akt_elem=$count_slash+1
+    while [ $max -ge $((elem+1)) ]
+    do
+        # wenn schon was im string steht
+        if [ ! -z $newdir ]; then
+            # wenn das nächste element das letzte sein soll (und nicht alle angezeigt werden sollen)
+            # echo "elem: $elem; elem+1: $((elem+1)); max: $max; all: $all"
+            if [[ $((elem+1)) -eq $max && $all == false ]]; then
+                newdir="%F{$fg}${array[1]}%$seperator$abridged$seperator$newdir"
+            # sonst
+            else
+                newdir="%F{$fg}${array[$akt_elem]}%f$seperator$newdir"
+            fi
+        # wenn der string leer ist aber nur ein element rein soll
+        elif [[ $max -eq 1 && $akt_elem -gt 1 ]]; then
+            newdir="$abridged%F{$fg}$array[$akt_elem]%f"
+        # wenn der string nur leer ist
+        else
+            newdir="%F{$fg}$array[$akt_elem]%f"
+        fi
+        let elem=$elem+1
+        let akt_elem=$akt_elem-1
+    done
+    echo -n $newdir
 }
 function directory(){
     dir=$(get_dir 0)
     count=10
-    while [ ${#dir} -gt 30 ]
+    local zero='%([BSUbfksu]|([FBK]|){*})'
+    while [ ${#${(S%%)dir//$~zero/}}  -gt 30 ]
     do
         dir="$(get_dir $count)"
         let count=$count-1
@@ -107,7 +124,7 @@ function build_prompt_left(){
     let color_0=$bg-1
     let color_1=$bg
     let color_2=$bg+2
-    host="$user%F{088}@%f%F{250}%m%f"
+    host="$user%F{000}@%f%F{$fg}%m%f"
     dir=$(directory)
     draw_segment_left $color_0 $exitvar
     draw_segment_left $color_1 $host
