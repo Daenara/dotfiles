@@ -27,14 +27,13 @@ function check_ssh(){
 }
 function usercolor(){
     who=$(whoami)
+    fontcolor="040"
     if [ "$who" = "root" ]; then
         fontcolor="088"
     elif [ "$who" = "daenara" ]; then
         fontcolor="063"
     elif [ "$who" = "seibel" ]; then
         fontcolor="021"
-    else
-        fontcolor="040"
     fi
     echo -n "%F{$fontcolor}%n%f"      
 }
@@ -47,19 +46,18 @@ function exit_status(){
     fi
 }
 function get_dir(){
-    local max=$1
-    dir="${PWD/#$HOME/~}"
+    max=$1
+    akt_dir="${PWD/#$HOME/~}"
     # trennzeichen zwischen ordnern
     seperator="%F{000}/%f"
     # string der an gekürzten stellen angezeigt wird
     abridged="%F{$fg}..%f"
     # anzahl von / im pfad
-    count_slash=$(grep -o "/" <<< "$dir" | wc -l)
+    count_slash=$(grep -o "/" <<< "$akt_dir" | wc -l)
     array=()
     # alle ordnernamen werden in array geschrieben
-    for (( i=1; i<=$count_slash+1; i++ ))
-    do
-        array[$i]=$(cut -d/ -f$i <<< "$dir")
+    for (( i=1; i<=$count_slash+1; i++ )); do
+        array[$i]=$(cut -d/ -f$i <<< "$akt_dir")
     done
     # true wenn der ganze pfad ausgegeben werden soll, sonst false
     all=false
@@ -71,8 +69,7 @@ function get_dir(){
     newdir=""
     # das aktuelle element im array ist das letzte
     let akt_elem=$count_slash+1
-    while [ $max -ge $((elem+1)) ]
-    do
+    while [ $max -ge $((elem+1)) ]; do
         # wenn schon was im string steht
         if [ ! -z $newdir ]; then
             # wenn das nächste element das letzte sein soll (und nicht alle angezeigt werden sollen)
@@ -100,19 +97,18 @@ get_visible_string() {
     echo -n ${${(S%%)1//$~zero}}
 }
 function directory(){
-    dir="$(get_dir 0)"
-    visible_dir="$(get_visible_string $dir)"
+    akt_dir="$(get_dir 0)"
+    visible_dir="$(get_visible_string $akt_dir)"
     count=10
-    while [ ${#visible_dir}  -gt 30 ]
-    do
-        dir="$(get_dir $count)"
-        visible_dir="$(get_visible_string $dir)"
+    while [ ${#visible_dir}  -gt 30 ]; do
+        akt_dir="$(get_dir $count)"
+        visible_dir="$(get_visible_string $akt_dir)"
         let count=$count-1
         if [ $count -eq 0 ]; then
             break 
         fi
     done
-    echo -n $dir
+    echo -n $akt_dir
 }
 function draw_segment_left(){
     local bg=$1 content=$2
@@ -128,10 +124,10 @@ function build_prompt_left(){
     let color_1=$bg
     let color_2=$bg+2
     host="$user%F{000}@%f%F{$fg}%m%f"
-    dir=$(directory)
+    akt_dir=$(directory)
     draw_segment_left $color_0 $exitvar
     draw_segment_left $color_1 $host
-    draw_segment_left $color_2 $dir
+    draw_segment_left $color_2 $akt_dir
     print -n $arrow_left_temp
 }
 function draw_segment_right(){
