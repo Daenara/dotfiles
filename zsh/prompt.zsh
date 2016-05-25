@@ -10,7 +10,7 @@ LIGHTNING="\u26a1"
 GEAR="\u2699"
 arrow_left=$'\ue0b0' # 
 arrow_sep=$'\ue0b1'
-arrow_right=$'\ue0b2' #    
+arrow_right=$'\ue0b2'
 # colors
 fg=255
 bg=236
@@ -35,7 +35,7 @@ function usercolor(){
     elif [ "$who" = "seibel" ]; then
         fontcolor="021"
     fi
-    echo -n "%F{$fontcolor}%n%f"      
+    echo -n "%F{$fontcolor}%n%f"
 }
 
 function exit_status(){
@@ -105,7 +105,7 @@ function directory(){
         visible_dir="$(get_visible_string $akt_dir)"
         let count=$count-1
         if [ $count -eq 0 ]; then
-            break 
+            break
         fi
     done
     echo -n $akt_dir
@@ -132,8 +132,8 @@ function build_prompt_left(){
 }
 function draw_segment_right(){
     local bg=$1 content=$2
-    if [ ! -z $content ]; then 
-        print -n "%K{$arrow_right_temp}%F{$bg}$arrow_right%f%k%K{$bg} $content %k"    
+    if [ ! -z $content ]; then
+        print -n "%K{$arrow_right_temp}%F{$bg}$arrow_right%f%k%K{$bg} $content %k"
         arrow_right_temp=$bg
     fi
 }
@@ -144,7 +144,6 @@ function build_prompt_right(){
     draw_segment_right $color_0 $time
     draw_segment_right $color_1 $ssh_status
 }
-
 
 # prompt links
 PROMPT='$(build_prompt_left)'
