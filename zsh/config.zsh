@@ -18,4 +18,7 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 # Prefered editor
 export EDITOR='vim'
 
-ZLE_RPROMPT_INDENT=0
+ZLE_RPROMPT_INDENT=0 # getting rid of the space right
+setopt autocd # cd into folder when foldername is entered
+setopt correct # try to correct wrong command
+
