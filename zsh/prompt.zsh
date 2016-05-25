@@ -47,7 +47,7 @@ function exit_status(){
     fi
 }
 function get_dir(){
-    local n=$1
+    local max=$1
     dir="${PWD/#$HOME/~}"
     # trennzeichen zwischen ordnern
     seperator="%F{000}/%f"
@@ -61,11 +61,9 @@ function get_dir(){
     do
         array[$i]=$(cut -d/ -f$i <<< "$dir")
     done
-    # maximale anzahl der pfadelemente
-    max=$n
     # true wenn der ganze pfad ausgegeben werden soll, sonst false
     all=false
-    if [ -z $n ] || [ $n = 0 ]; then
+    if [ -z $max ] || [ $max = 0 ] || [ $max -ge $((count_slash+1)) ]; then
         let max=$count_slash+1
         all=true
     fi
@@ -80,7 +78,7 @@ function get_dir(){
             # wenn das nächste element das letzte sein soll (und nicht alle angezeigt werden sollen)
             # echo "elem: $elem; elem+1: $((elem+1)); max: $max; all: $all"
             if [[ $((elem+1)) -eq $max && $all == false ]]; then
-                newdir="%F{$fg}${array[1]}%$seperator$abridged$seperator$newdir"
+                newdir="%F{$fg}${array[1]}%f$seperator$abridged$seperator$newdir"
             # sonst
             else
                 newdir="%F{$fg}${array[$akt_elem]}%f$seperator$newdir"
@@ -97,13 +95,18 @@ function get_dir(){
     done
     echo -n $newdir
 }
+get_visible_string() {
+    local zero='%([BSUbfksu]|([FB]|){*})'
+    echo -n ${${(S%%)1//$~zero}}
+}
 function directory(){
-    dir=$(get_dir 0)
+    dir="$(get_dir 0)"
+    visible_dir="$(get_visible_string $dir)"
     count=10
-    local zero='%([BSUbfksu]|([FBK]|){*})'
-    while [ ${#${(S%%)dir//$~zero/}}  -gt 30 ]
+    while [ ${#visible_dir}  -gt 30 ]
     do
         dir="$(get_dir $count)"
+        visible_dir="$(get_visible_string $dir)"
         let count=$count-1
         if [ $count -eq 0 ]; then
             break 
