@@ -101,7 +101,7 @@ function directory(){
     dir=$(get_dir 0)
     count=10
     local zero='%([BSUbfksu]|([FBK]|){*})'
-    while [ ${#${(S%%)dir//$~zero/}}  -gt 30 ]
+    while [ ${#${(S%%)dir//$~zero/}} -gt 30 ]
     do
         dir="$(get_dir $count)"
         let count=$count-1
