@@ -25,6 +25,7 @@ filetype indent on " load filetype-specific indent files
 filetype plugin on " load filetype-specific plugin files
 syntax enable " enable syntax processing
 set mouse=a " enable mouse for all modes
+set scrolloff=10 " always show this many lines avove and below cursor
 
 " #### wrapping ####
 set wrap " display text in next line if line is to long
