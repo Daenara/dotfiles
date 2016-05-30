@@ -130,6 +130,12 @@ function dir_len(){
         echo 50
     fi
 }
+# display git status
+function git_status() {
+    if [[ $(get_vcs_branch) == "master" ]]; then
+        echo -n "%F{$fg}$BRANCH master%f"
+    fi
+}
 # draw a prompt segment for the left side of the prompt
 function draw_segment_left(){
     local bg=$1 content=$2
@@ -144,12 +150,15 @@ function build_prompt_left(){
     user=$(usercolor)
     let color_0=$bg-1
     let color_1=$bg
-    let color_2=$bg+2
+    let color_2=$bg+1
+    let color_3=$bg+2
     host="$user%F{000}@%f%F{$fg}%m%f"
     akt_dir=$(directory $(dir_len))
+    git_infos=$(git_status)
     draw_segment_left $color_0 $exitvar
     draw_segment_left $color_1 $host
-    draw_segment_left $color_2 $akt_dir
+    draw_segment_left $color_2 $git_infos
+    draw_segment_left $color_3 $akt_dir
     print -n $arrow_left_temp
 }
 # draw a prompt segment for the right side of the prompt
@@ -168,7 +177,7 @@ function build_prompt_right(){
     draw_segment_right $color_0 $time
     draw_segment_right $color_1 $ssh_status
 }
-
+precmd () { vcs_enable }
 # prompt links
 PROMPT='$(build_prompt_left)'
 # prompt rechts
