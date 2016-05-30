@@ -1,23 +1,32 @@
-autoload -Uz vcs_info
+typeset -A git_infos
+function git_information() {
+    git_infos=()
+    git_infos[branch]=$(git symbolic-ref HEAD 2>/dev/null | cut -d'/' -f3)
+    if [ ! -z $git_infos[branch] ]; then
+        # get ahead and behind remote branch
+        git_infos[ahead]=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
+        git_infos[behind]=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
+        if [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]]; then
+            git_infos[dirty]=true
+        else
+            git_infos[dirty]=false
+        fi
 
-zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:*' formats '%s' '%b' '%m'
-zstyle ':vcs_info:*' actionformats '%s' '%b' '%m' '%a'
-zstyle ':vcs_info:*' check-for-changes true
+        # get count of staged stashes
+        if [[ -s $(git rev-parse --git-dir)/refs/stash ]]; then
+            git_infos[stashes]=$(git stash list 2>/dev/null | wc -l)
+        fi
+        # Get number of files added to the index (but uncommitted)
+        git_infos[added]=$(git status --porcelain 2>/dev/null| egrep "^(A|MM)" | wc -l)
 
-function vcs_enable() {
-    vcs_info
+        # Get number of files that are uncommitted and not added
+        git_infos[unadded]=$(git status --porcelain 2>/dev/null| egrep "^(\?\?| M|MM)" | wc -l)
+
+        # Get number of total uncommited files
+        git_infos[uncommited]=$(git status --porcelain 2>/dev/null| wc -l)
+    fi
 }
 
-function get_vcs_name() {
-    echo -n $vcs_info_msg_0_
-}
-function get_vcs_branch() {
-    echo -n $vcs_info_msg_1_
-}
-function get_vcs_unstaged() {
-
-}
-function get_vcs_staged() {
-
+function git_enable() {
+    git_information
 }

@@ -132,8 +132,16 @@ function dir_len(){
 }
 # display git status
 function git_status() {
-    if [[ $(get_vcs_branch) == "master" ]]; then
-        echo -n "%F{$fg}$BRANCH master%f"
+    local branch=$git_infos[branch]
+    if [ ! -z $branch ]; then
+        local output=""
+        if [[ $branch == "master" ]]; then
+            output="%F{$fg}$BRANCH"
+        else
+            output="%F{$fg}$cross"
+        fi
+        output="$output $branch%f"
+        echo -n $output
     fi
 }
 # draw a prompt segment for the left side of the prompt
