@@ -20,8 +20,11 @@ setopt share_history # imports new commands and appends typed commands to histor
 
 # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 HIST_STAMPS="dd.mm.yyyy" # change timestamp in history
-
-HISTFILE=$ZSH/run/history-$HOST-$UID
+if [[ $(hostname -d) == "rbi.informatik.uni-frankfurt.de" ]]; then
+    HISTFILE=$ZSH/run/history-rbi-$UID
+else
+    HISTFILE=$ZSH/run/history-$HOST-$UID
+fi
 
 # Bigger History
 HISTSIZE=20000

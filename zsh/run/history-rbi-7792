@@ -1,0 +1,10 @@
+: 1464620390:0;exit
+: 1464620461:0;cd dotfiles/zsh/run
+: 1464620463:0;ls -a
+: 1464620467:0;ls -la
+: 1464620487:0;rm history-euros.rbi.informatik.uni-frankfurt.de-7792
+: 1464620493:0;ls -la
+: 1464620498:0;..
+: 1464620514:0;git add zsh/history.zsh zsh/run
+: 1464620518:0;git commit
+: 1464620537:0;git add zsh/run/history-rbi-7792
