@@ -42,8 +42,8 @@ set softtabstop=4 " number of spaces when editing
 set tabstop=4 " number of spaces shown for tab
 
 " #### directorys ####
-set backupdir=~/.vim/run/backupdir,~/.tmp,~/tmp,/var/tmp,/tmp
-set directory=~/.vim/run/backupdir,~/.tmp,~/tmp,/var/tmp,/tmp
+set backupdir=~/.vim/run/backupdir//,~/.tmp,~/tmp,/var/tmp,/tmp
+set directory=~/.vim/run/backupdir//,~/.tmp,~/tmp,/var/tmp,/tmp
 
 " Return to last edit position when opening files
 autocmd BufReadPost *
