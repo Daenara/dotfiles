@@ -2,15 +2,9 @@ setopt prompt_subst
 autoload -Uz promptinit
 autoload -Uz colors && colors
 promptinit
-PLUSMINUS="\u00b1"
-BRANCH="\ue0a0"
-DETACHED="\u27a6"
-cross="\u2718"
-LIGHTNING="\u26a1"
-GEAR="\u2699"
-arrow_left=$'\ue0b0' # 
-arrow_sep=$'\ue0b1'
-arrow_right=$'\ue0b2'
+#PLUSMINUS="\u00b1"
+#DETACHED="\u27a6"# ➦
+#GEAR="\u2699"# ⚙
 # colors
 fg=255
 bg=236
@@ -18,6 +12,19 @@ bg=236
 time="%F{$fg}%T%f"
 arrow_left_temp=""
 arrow_right_temp=""
+typeset -A symbols
+function __symbols(){
+    symbols[cross]="\u2718"       # ✘
+    symbols[branch]="\ue0a0"      # 
+    symbols[arrow_r]="\ue0b2"     # 
+    symbols[arrow_l]="\ue0b0"     # 
+    symbols[arrow_sep_l]="\ue0b1" # 
+    symbols[arrow_sep_r]="\ue0b3" # 
+    symbols[lightning]="\u26a1"   # ⚡
+    symbols[arrow_u]="\u2191"     # ↑
+    symbols[arrow_d]="\u2193"     # ↓
+    symbols[arrow_ud]="\u21c5"    # ⇅
+}
 # output the ssh connection status (SSH if connected, else nothing)
 function check_ssh(){
     if [ $SSH_CONNECTION ]; then
@@ -42,7 +49,7 @@ function usercolor(){
 # display the exit status (red cross when 1 else empty)
 function exit_status(){
     if [ "$?" = "1" ]; then
-        echo -n "%F{001}$cross%f"
+        echo -n "%F{001}$symbols[cross]%f"
     else
         echo -n ""
     fi
@@ -132,15 +139,25 @@ function dir_len(){
 }
 # display git status
 function git_status() {
-    local branch=$git_infos[branch]
-    if [ ! -z $branch ]; then
+    local branchname=$git_infos[branch]
+    if [ ! -z $branchname ]; then
         local output=""
-        if [[ $branch == "master" ]]; then
-            output="%F{$fg}$BRANCH"
+        if [[ $branchname == "master" ]]; then
+            output="%F{$fg}$symbols[branch]"
         else
-            output="%F{$fg}$cross"
+            output="%F{$fg}$symbols[cross]"
+        fi 
+        output="$output $branchname"
+        if [ $git_infos[ahead] -gt 0 ];then
+            if [ $git_infos[behind] -eq 0 ]; then
+                output="$output $symbols[arrow_u]"
+            else
+                output="$output $symbols[arrow_ud]"
+            fi
+        elif [ $git_infos[behind] -gt 0 ]; then
+            output="$output $symbols[arrow_d]"
         fi
-        output="$output $branch%f"
+        output="$output%f"
         echo -n $output
     fi
 }
@@ -149,7 +166,7 @@ function draw_segment_left(){
     local bg=$1 content=$2
     if [ ! -z $content ]; then
         print -n "%K{$bg}$arrow_left_temp $content %k"
-        arrow_left_temp="%F{$bg}$arrow_left%f"
+        arrow_left_temp="%F{$bg}$symbols[arrow_l]%f"
     fi
 }
 # build the left side prompt
@@ -173,7 +190,7 @@ function build_prompt_left(){
 function draw_segment_right(){
     local bg=$1 content=$2
     if [ ! -z $content ]; then
-        print -n "%K{$arrow_right_temp}%F{$bg}$arrow_right%f%k%K{$bg} $content %k"
+        print -n "%K{$arrow_right_temp}%F{$bg}$symbols[arrow_r]%f%k%K{$bg} $content %k"
         arrow_right_temp=$bg
     fi
 }
@@ -185,7 +202,10 @@ function build_prompt_right(){
     draw_segment_right $color_0 $time
     draw_segment_right $color_1 $ssh_status
 }
-precmd () { vcs_enable }
+function precmd () {
+    __symbols
+    vcs_enable
+}
 # prompt links
 PROMPT='$(build_prompt_left)'
 # prompt rechts
