@@ -4,8 +4,8 @@ function git_information() {
     git_infos[branch]=$(git symbolic-ref HEAD 2>/dev/null | cut -d'/' -f3)
     if [ ! -z $git_infos[branch] ]; then
         # get ahead and behind remote branch
-        git_infos[ahead]=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
-        git_infos[behind]=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
+        git_infos[ahead]=$(git rev-list ${git_infos[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
+        git_infos[behind]=$(git rev-list HEAD..${git_infos[branch]}@{upstream} 2>/dev/null | wc -l)
         if [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]]; then
             git_infos[dirty]=true
         else
