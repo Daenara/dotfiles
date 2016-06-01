@@ -9,7 +9,6 @@ promptinit
 fg=255
 bg=236
 # uhrzeit
-time="%F{$colors[fg]}%T%f"
 arrow_left_temp=""
 arrow_right_temp=""
 typeset -A symbols
@@ -113,6 +112,9 @@ function get_dir(){
         let act_elem=$act_elem-1
     done
     echo -n $newdir
+}
+function get_time() {
+    echo "%F{$colors[fg]}%T%f"
 }
 # strips the string of all zsh format expressions
 get_visible_string() {
@@ -236,17 +238,14 @@ function draw_segment_right() {
 function build_prompt_right() {
     ssh_status=$(check_ssh)
     git_status_r=$(git_status_right)
-    draw_segment_right $colors[bg] $time
-    draw_segment_right $colors[bg_-1] $git_status_r
-    draw_segment_right $colors[bg_-2] $ssh_status
+    act_time=$(get_time)
+    draw_segment_right $colors[bg_+1] $git_status_r
+    draw_segment_right $colors[bg] $act_time
+    draw_segment_right $colors[bg_-1] $ssh_status
 }
 function precmd() {
-    if [ -z colors ]; then
-        __colors
-    fi
-    if [ -z symbols ]; then
-        __symbols
-    fi
+    __colors
+    __symbols
     git_enable
 }
 function chpwd() {
