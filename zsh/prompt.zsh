@@ -30,9 +30,9 @@ function __symbols(){
 function __colors() {
     colors[fg]=255
     colors[bg]=236
-    colors[uncommited]=160
-    colors[added]=036
-    colors[unadded]=154
+    colors[uncommited]=124
+    colors[added]=129
+    colors[unadded]=033
     for (( i=1; i <= 5; i++ )); do
         colors[bg_-$i]=$(($colors[bg]-$i))
         colors[bg_+$i]=$(($colors[bg]+$i))
@@ -185,18 +185,26 @@ function git_status_right() {
                 output="$output%F{green}$symbols[circle]%f "
             elif [ $git_infos[added] -lt 5 ]; then
                 output="$output%F{$colors[added]}$symbols[circle]%f "
+            elif [ $git_infos[added] -lt 10 ]; then
+                output="$output%F{$(($colors[added]+2))}$symbols[circle]%f "
+            else
+                output="$output%F{$(($colors[added]+4))}$symbols[circle]%f "
             fi
             if [ $git_infos[unadded] -eq 0 ]; then
                 output="$output%F{green}$symbols[circle]%f"
             elif [ $git_infos[unadded] -lt 5 ]; then
                 output="$output%F{$colors[unadded]}$symbols[circle]%f"
+            elif [ $git_infos[unadded] -lt 10 ]; then
+                output="$output%F{$(($colors[unadded]+2))}$symbols[circle]%f"
+            else
+                output="$output%F{$(($colors[unadded]+4))}$symbols[circle]%f"
             fi
         fi
         echo -n $output
     fi
 }
 # draw a prompt segment for the left side of the prompt
-function draw_segment_left(){
+function draw_segment_left() {
     local bg=$1 content=$2
     if [ ! -z $content ]; then
         print -n "%K{$bg}$arrow_left_temp $content %k"
@@ -204,7 +212,7 @@ function draw_segment_left(){
     fi
 }
 # build the left side prompt
-function build_prompt_left(){
+function build_prompt_left() {
     exitvar=$(exit_status)
     user=$(usercolor)
     host="$user%F{000}@%f%F{$colors[fg]}%m%f"
@@ -217,7 +225,7 @@ function build_prompt_left(){
     print -n $arrow_left_temp
 }
 # draw a prompt segment for the right side of the prompt
-function draw_segment_right(){
+function draw_segment_right() {
     local bg=$1 content=$2
     if [ ! -z $content ]; then
         print -n "%K{$arrow_right_temp}%F{$bg}$symbols[arrow_r]%f%k%K{$bg} $content %k"
@@ -225,17 +233,24 @@ function draw_segment_right(){
     fi
 }
 # build the right side prompt
-function build_prompt_right(){
+function build_prompt_right() {
     ssh_status=$(check_ssh)
     git_status_r=$(git_status_right)
     draw_segment_right $colors[bg] $time
     draw_segment_right $colors[bg_-1] $git_status_r
     draw_segment_right $colors[bg_-2] $ssh_status
 }
-function precmd () {
-    __symbols
-    __colors
-    vcs_enable
+function precmd() {
+    if [ -z colors ]; then
+        __colors
+    fi
+    if [ -z symbols ]; then
+        __symbols
+    fi
+    git_enable
+}
+function chpwd() {
+    git_enable
 }
 # prompt links
 PROMPT='$(build_prompt_left)'
