@@ -9,10 +9,11 @@ promptinit
 fg=255
 bg=236
 # uhrzeit
-time="%F{$fg}%T%f"
+time="%F{$colors[fg]}%T%f"
 arrow_left_temp=""
 arrow_right_temp=""
 typeset -A symbols
+typeset -A colors
 function __symbols(){
     symbols[cross]="\u2718"       # ✘
     symbols[branch]="\ue0a0"      # 
@@ -24,11 +25,23 @@ function __symbols(){
     symbols[arrow_u]="\u2191"     # ↑
     symbols[arrow_d]="\u2193"     # ↓
     symbols[arrow_ud]="\u21c5"    # ⇅
+    symbols[circle]="\u25c6"      # ∙
+}
+function __colors() {
+    colors[fg]=255
+    colors[bg]=236
+    colors[uncommited]=160
+    colors[added]=036
+    colors[unadded]=154
+    for (( i=1; i <= 5; i++ )); do
+        colors[bg_-$i]=$(($colors[bg]-$i))
+        colors[bg_+$i]=$(($colors[bg]+$i))
+    done
 }
 # output the ssh connection status (SSH if connected, else nothing)
 function check_ssh(){
     if [ $SSH_CONNECTION ]; then
-        echo -n "%F{$fg}SSH%f"
+        echo -n "%F{$colors[fg]}SSH%f"
     else
         echo ""
     fi
@@ -61,7 +74,7 @@ function get_dir(){
     # seperator for folders
     seperator="%F{000}/%f"
     # string showing where the path was abridged
-    abridged="%F{$fg}..%f"
+    abridged="%F{$colors[fg]}..%f"
     # number of / in path
     count_slash=$(grep -o "/" <<< "$akt_dir" | wc -l)
     array=()
@@ -84,17 +97,17 @@ function get_dir(){
         if [ ! -z $newdir ]; then
             # if next element will be the last (and not whole path is outputted)
             if [[ $((elem+1)) -eq $max && $all == false ]]; then
-                newdir="%F{$fg}${array[1]}%f$seperator$abridged$seperator$newdir"
+                newdir="%F{$colors[fg]}${array[1]}%f$seperator$abridged$seperator$newdir"
             # else
             else
-                newdir="%F{$fg}${array[$act_elem]}%f$seperator$newdir"
+                newdir="%F{$colors[fg]}${array[$act_elem]}%f$seperator$newdir"
             fi
         # if output string is empty and will contain only one element
         elif [[ $max -eq 1 && $act_elem -gt 1 ]]; then
-            newdir="$abridged%F{$fg}$array[$act_elem]%f"
+            newdir="$abridged%F{$colors[fg]}$array[$act_elem]%f"
         # if output string is empty
         else
-            newdir="%F{$fg}$array[$act_elem]%f"
+            newdir="%F{$colors[fg]}$array[$act_elem]%f"
         fi
         let elem=$elem+1
         let act_elem=$act_elem-1
@@ -137,16 +150,16 @@ function dir_len(){
         echo 50
     fi
 }
-# display git status
-function git_status() {
+# display git status on the left prompt
+function git_status_left() {
     local branchname=$git_infos[branch]
     if [ ! -z $branchname ]; then
         local output=""
         if [[ $branchname == "master" ]]; then
-            output="%F{$fg}$symbols[branch]"
+            output="%F{$colors[fg]}$symbols[branch]"
         else
-            output="%F{$fg}$symbols[cross]"
-        fi 
+            output="%F{$colors[fg]}$symbols[cross]"
+        fi
         output="$output $branchname"
         if [ $git_infos[ahead] -gt 0 ];then
             if [ $git_infos[behind] -eq 0 ]; then
@@ -158,6 +171,27 @@ function git_status() {
             output="$output $symbols[arrow_d]"
         fi
         output="$output%f"
+        echo -n $output
+    fi
+}
+# display git status on right prompt
+function git_status_right() {
+    local branchname=$git_infos[branch]
+    if [ ! -z $branchname ]; then
+        local output=""
+        if [ $git_infos[uncommited] -gt 0 ]; then
+            output="$output%F{$colors[uncommited]}$symbols[circle]%f "
+            if [ $git_infos[added] -eq 0 ]; then
+                output="$output%F{green}$symbols[circle]%f "
+            elif [ $git_infos[added] -lt 5 ]; then
+                output="$output%F{$colors[added]}$symbols[circle]%f "
+            fi
+            if [ $git_infos[unadded] -eq 0 ]; then
+                output="$output%F{green}$symbols[circle]%f"
+            elif [ $git_infos[unadded] -lt 5 ]; then
+                output="$output%F{$colors[unadded]}$symbols[circle]%f"
+            fi
+        fi
         echo -n $output
     fi
 }
@@ -173,17 +207,13 @@ function draw_segment_left(){
 function build_prompt_left(){
     exitvar=$(exit_status)
     user=$(usercolor)
-    let color_0=$bg-1
-    let color_1=$bg
-    let color_2=$bg+1
-    let color_3=$bg+2
-    host="$user%F{000}@%f%F{$fg}%m%f"
+    host="$user%F{000}@%f%F{$colors[fg]}%m%f"
     akt_dir=$(directory $(dir_len))
-    git_infos=$(git_status)
-    draw_segment_left $color_0 $exitvar
-    draw_segment_left $color_1 $host
-    draw_segment_left $color_2 $git_infos
-    draw_segment_left $color_3 $akt_dir
+    git_status_l=$(git_status_left)
+    draw_segment_left $colors[bg_-1] $exitvar
+    draw_segment_left $colors[bg] $host
+    draw_segment_left $colors[bg_+1] $git_status_l
+    draw_segment_left $colors[bg_+2] $akt_dir
     print -n $arrow_left_temp
 }
 # draw a prompt segment for the right side of the prompt
@@ -196,14 +226,15 @@ function draw_segment_right(){
 }
 # build the right side prompt
 function build_prompt_right(){
-    let color_0=$bg
-    let color_1=$bg-2
     ssh_status=$(check_ssh)
-    draw_segment_right $color_0 $time
-    draw_segment_right $color_1 $ssh_status
+    git_status_r=$(git_status_right)
+    draw_segment_right $colors[bg] $time
+    draw_segment_right $colors[bg_-1] $git_status_r
+    draw_segment_right $colors[bg_-2] $ssh_status
 }
 function precmd () {
     __symbols
+    __colors
     vcs_enable
 }
 # prompt links

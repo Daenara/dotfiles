@@ -17,7 +17,7 @@ function git_information() {
             git_infos[stashes]=$(git stash list 2>/dev/null | wc -l)
         fi
         # Get number of files added to the index (but uncommitted)
-        git_infos[added]=$(git status --porcelain 2>/dev/null| egrep "^(A|MM)" | wc -l)
+        git_infos[added]=$(git status --porcelain 2>/dev/null| egrep "^(A|MM|M )" | wc -l)
 
         # Get number of files that are uncommitted and not added
         git_infos[unadded]=$(git status --porcelain 2>/dev/null| egrep "^(\?\?| M|MM)" | wc -l)
