@@ -5,10 +5,6 @@ promptinit
 #PLUSMINUS="\u00b1"
 #DETACHED="\u27a6"# ➦
 #GEAR="\u2699"# ⚙
-# colors
-fg=255
-bg=236
-# uhrzeit
 arrow_left_temp=""
 arrow_right_temp=""
 typeset -A symbols
