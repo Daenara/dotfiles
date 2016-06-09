@@ -7,6 +7,7 @@ Plug 'flazz/vim-colorschemes' " colorschemes for vim
 Plug 'Yggdroot/indentLine' " show indent lines
 Plug 'ervandew/supertab' " tabcompletion
 Plug 'Raimondi/delimitMate' " autocloses brackets
+Plug 'tpope/vim-fugitive' " git plugin for vim
 
 " Add plugins to &runtimepath
 call plug#end()
