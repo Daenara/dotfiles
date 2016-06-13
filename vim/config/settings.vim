@@ -20,7 +20,6 @@ set lazyredraw " redraw only when we need to
 set autoindent " autoindent
 set smartindent " smart indent
 set showcmd " show commands in statusbar
-set ruler " show current position
 filetype indent on " load filetype-specific indent files
 filetype plugin on " load filetype-specific plugin files
 syntax enable " enable syntax processing
