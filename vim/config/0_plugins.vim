@@ -5,9 +5,12 @@ call plug#begin('~/.vim/plugged')
 Plug 'flazz/vim-colorschemes' " colorschemes for vim
 Plug 'airblade/vim-rooter' " set vim working directory
 Plug 'Yggdroot/indentLine' " show indent lines
-Plug 'ervandew/supertab' " tabcompletion
+"Plug 'ervandew/supertab' " tabcompletion
 Plug 'Raimondi/delimitMate' " autocloses brackets
 Plug 'tpope/vim-fugitive' " git plugin for vim
+Plug 'Shougo/neocomplete.vim' " autocomplete
+Plug 'Shougo/neco-vim'
+"Plug 'sirver/ultisnips'
 
 " Add plugins to &runtimepath
 call plug#end()
