@@ -1,0 +1,6 @@
+[theme]
+name=daenara
+description=My personal theme
+engine=lightdm-webkit-greeter
+url=index.html
+session=xfce
