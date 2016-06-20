@@ -44,7 +44,7 @@ set tabstop=4 " number of spaces shown for tab
 " #### directorys ####
 set backupdir=~/.vim/run/backupdir//,~/.tmp,~/tmp,/var/tmp,/tmp
 set directory=~/.vim/run/backupdir//,~/.tmp,~/tmp,/var/tmp,/tmp
-let g:netrw_home='/vim/run'
+let g:netrw_home='~/.vim/run'
 
 " Return to last edit position when opening files
 autocmd BufReadPost *
