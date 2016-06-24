@@ -2,7 +2,7 @@ import QtQuick 2.0
 import SddmComponents 2.0
 
 Rectangle {
-    id: container
+    //id: container
     width: 1024
     height: 768
     property int sessionIndex: session.index
@@ -21,15 +21,10 @@ Rectangle {
     /********************************
                Background
     *********************************/
-    Rectangle {
+    Background {
         anchors.fill: parent
-        color: "transparent"
-        Image {
-            id: background
-            anchors.fill: parent
-            source: "background.png"
-            fillMode: Image.PreserveAspectCrop
-        }
+        source: config.background
+        fillMode: Image.PreserveAspect
     }
 
     /*******************************
