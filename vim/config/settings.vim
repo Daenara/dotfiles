@@ -1,5 +1,4 @@
 set nocompatible " disable compability mode for vi
-set term=rxvt-unicode-256color
 set enc=utf-8
 set linespace=0
 set history=1000
@@ -44,7 +43,7 @@ set tabstop=4 " number of spaces shown for tab
 " #### directorys ####
 set backupdir=~/.vim/run/backupdir//,~/.tmp,~/tmp,/var/tmp,/tmp
 set directory=~/.vim/run/backupdir//,~/.tmp,~/tmp,/var/tmp,/tmp
-let g:netrw_home='~/.vim/run'
+let g:netrw_home='/home/daenara/.vim/run'
 
 " Return to last edit position when opening files
 autocmd BufReadPost *
