@@ -12,6 +12,7 @@ Rectangle {
         onLoginSucceeded: {
         }
         onLoginFailed: {
+            messagePopup.state = "show"
             txtMessage.text = textConstants.loginFailed
             password.text = ""
         }
@@ -34,24 +35,6 @@ Rectangle {
         property variant geometry: screenModel.geometry(screenModel.primary)
         x: geometry.x; y: geometry.y; width: geometry.width; height: geometry.height
         color: "transparent"
-	/********* Message Popup ********/
-	Rectangle {
-	    id: messagePopup
-	    width: 300
-	    height: 214
-	    Image{
-	        id: messageImage
-	        anchors.fill: parent
-                source: "resources/message.png"
-            }
-            Text {
-                id: txtMessage
-                anchors.horizontalCenter: parent.horizontalCenter
-                y: 40
-                text: textConstraints.promt
-                font.pixelSize: 10
-            } 
-	}
         /********* Login Box *********/
         Rectangle {
             id: loginBox
@@ -108,11 +91,11 @@ Rectangle {
                         focusColor: "transparent"
                         hoverColor: "transparent"
                         font.pixelSize: 12
-			Timer {
-				interval: 200
-				running: true
-				onTriggered: password.forceActiveFocus()
-			}
+                        Timer {
+                            interval: 200
+                            running: true
+                            onTriggered: password.forceActiveFocus()
+                        }
                         KeyNavigation.backtab: name; KeyNavigation.tab: session
                         Keys.onPressed: {
                             if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
@@ -188,5 +171,44 @@ Rectangle {
                 index: sessionModel.lastIndex
             }
         }
+        /********* Message Popup ********/
+        Rectangle {
+            id: messagePopup
+            width: 300
+            height: 214
+            visible: false
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            Image {
+                id: messageImage
+                anchors.fill: parent
+                source: "resources/message.png"
+            }
+            Text {
+                id: txtMessage
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: 85
+                text: textConstraints.promt
+                font.pixelSize: 14
+            }
+            ImageButton {
+                id: popupConfirm
+                y: 160
+                anchors.horizontalCenter: parent.horizontalCenter
+                source: "resources/button_yes.png"
+                onClicked: messagePopup.state = "hide"
+            }
+            states: [ 
+                State {
+                    name: "show"
+                    PropertyChanges { target: messagePopup; visible: true }
+                },
+                State {
+                    name: "hide"
+                    PropertyChanges { target: messagePopup; visible: false }
+                }
+            ]
+        }
+
     }
 }
