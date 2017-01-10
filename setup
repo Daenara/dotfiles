@@ -1,11 +1,12 @@
 #!/bin/bash
 
 sudo rm ~/.zshrc
-sudo ln -s zshrc ~/.zshrc
+sudo ln -s ~/dotfiles/zshrc ~/.zshrc
 sudo rm -r ~/.zsh
-sudo ln -s zsh ~/.zsh
+sudo ln -s ~/dotfiles/zsh ~/.zsh
+mkdir ~/.zsh/run
 
 sudo rm ~/.vimrc
-sudo ln -s vimrc ~/.vimrc
+sudo ln -s ~/dotfiles/vimrc ~/.vimrc
 sudo rm -r ~/.vim
-sudo ln -s zsh ~/.vim
+sudo ln -s ~/dotfiles/zsh ~/.vim
