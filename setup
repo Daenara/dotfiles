@@ -10,3 +10,4 @@ sudo rm ~/.vimrc
 sudo ln -s ~/dotfiles/vimrc ~/.vimrc
 sudo rm -r ~/.vim
 sudo ln -s ~/dotfiles/zsh ~/.vim
+mkdir ~/.vim/run
