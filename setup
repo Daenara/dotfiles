@@ -1,0 +1,11 @@
+#!/bin/bash
+
+sudo rm ~/.zshrc
+sudo ln -s zshrc ~/.zshrc
+sudo rm -r ~/.zsh
+sudo ln -s zsh ~/.zsh
+
+sudo rm ~/.vimrc
+sudo ln -s vimrc ~/.vimrc
+sudo rm -r ~/.vim
+sudo ln -s zsh ~/.vim
